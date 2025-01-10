@@ -78,6 +78,45 @@ export default {
             hidden: true,
             defaultValue: [],
         },
+        borderCollapse: {
+            label: 'Border collapse',
+            type: 'TextRadioGroup',
+            category: 'table',
+            options: {
+                choices: [
+                    { title: 'Collapse', value: 'collapse', label: 'Collapse', default: true },
+                    { title: 'Separate', value: 'separate', label: 'Separate' },
+                ],
+            },
+            bindable: true,
+            responsive: true,
+            classes: true,
+            bindingValidation: { markdown: 'border-collapse', type: 'string' },
+        },
+        borderSpacing: {
+            label: 'Border spacing',
+            type: 'Spacing',
+            category: 'table',
+            bindable: true,
+            responsive: true,
+            classes: true,
+            bindingValidation: { markdown: 'border-spacing', type: 'string' },
+        },
+        tableLayout: {
+            label: 'Table Layout',
+            type: 'TextRadioGroup',
+            category: 'table',
+            options: {
+                choices: [
+                    { title: 'Auto', value: 'auto', label: 'Auto', default: true },
+                    { title: 'Fixed', value: 'fixed', label: 'Fixed' },
+                ],
+            },
+            bindable: true,
+            responsive: true,
+            classes: true,
+            bindingValidation: { markdown: 'table-layout', type: 'string' },
+        },
         rows: {
             label: {
                 en: 'Rows',

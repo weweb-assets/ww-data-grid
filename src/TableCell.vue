@@ -1,5 +1,5 @@
 <template>
-    <wwLocalContext :data="{ index, column, data, id }" elementKey="cell">
+    <wwLocalContext :data="{ index, column, data }" elementKey="cell">
         <wwElement v-bind="cellElement" tag="td"></wwElement>
     </wwLocalContext>
 </template>
@@ -11,7 +11,6 @@ export default {
         rowData: { type: undefined, required: true },
         column: { type: Object, required: true },
         cellElement: { type: Object, required: true },
-        dataId: { type: String, required: true },
     },
     setup() {
         const { resolveMappingFormula } = wwLib.wwFormula.useFormula();

@@ -1,5 +1,5 @@
 <template>
-    <table class="ww-datagrid">
+    <table class="ww-data-grid" :style="tableStyle">
         <wwElement v-bind="content.headerRowElement" noDropzone tag="thead">
             <template v-for="(col, index) in content.columns">
                 <wwLocalContext :data="{ index, data: col }" elementKey="column">
@@ -9,34 +9,26 @@
         </wwElement>
         <wwLayout path="rows" class="body" disable-edit tag="tbody">
             <template #default="{ index: rowIndex, data: rowData }">
-                <wwLocalContext
-                    :data="{ data: rowData, index: rowIndex, key: getId(rowData, rowIndex) }"
-                    elementKey="row"
-                >
-                    <wwElement v-bind="content.rowElement" noDropzone tag="tr">
-                        <template v-for="(column, colIndex) in content.columns">
-                            <TableCell
-                                :index="colIndex"
-                                :rowData="rowData"
-                                :column="column"
-                                :cellElement="content.cellElements[colIndex]"
-                                :dataId="getId(rowData, rowIndex)"
-                            ></TableCell>
-                        </template>
-                    </wwElement>
-                </wwLocalContext>
+                <TableRow
+                    :dataId="getId(rowData, rowIndex)"
+                    :rowIndex="rowIndex"
+                    :rowData="rowData"
+                    :cellElements="content.cellElements"
+                    :columns="content.columns"
+                    :rowElement="content.rowElement"
+                ></TableRow>
             </template>
         </wwLayout>
     </table>
 </template>
 
 <script>
-import TableCell from './TableCell.vue';
+import TableRow from './TableRow.vue';
 export default {
     props: {
         content: { type: Object, required: true },
     },
-    components: { TableCell },
+    components: { TableRow },
     emits: [/* wwEditor:start */ 'update:content' /* wwEditor:end */],
     setup() {
         const { createElement } = wwLib.useCreateElement();
@@ -45,6 +37,19 @@ export default {
             createElement,
             resolveMappingFormula,
         };
+    },
+    computed: {
+        tableStyle() {
+            const style = {};
+            const tableLayout = this.content['tableLayout'];
+            const borderCollapse = this.content['borderCollapse'];
+            const borderSpacing = this.content['borderSpacing'];
+            if (tableLayout) style['--ww-data-grid_layout'] = tableLayout;
+            if (borderCollapse) style['--ww-data-grid_borderCollapse'] = borderCollapse;
+            if (borderSpacing) style['--ww-data-grid_borderSpacing'] = borderSpacing;
+
+            return style;
+        },
     },
     methods: {
         getId(rowData, index) {
@@ -113,6 +118,11 @@ export default {
 </script>
 
 <style scoped>
+.ww-data-grid {
+    border-collapse: var(--ww-data-grid_borderCollapse, collapse);
+    border-spacing: var(--ww-data-grid_borderSpacing, 0);
+    table-layout: var(--ww-data-grid_layout, auto);
+}
 .body {
     display: table-row-group;
 }
