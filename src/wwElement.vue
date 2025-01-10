@@ -1,24 +1,28 @@
 <template>
     <table class="ww-data-grid" :style="tableStyle">
-        <wwElement v-bind="content.headerRowElement" noDropzone tag="thead">
-            <template v-for="(col, index) in content.columns">
-                <wwLocalContext :data="{ index, data: col }" elementKey="column">
-                    <wwElement v-bind="content.headerCellElements[index]" tag="th"></wwElement>
-                </wwLocalContext>
-            </template>
-        </wwElement>
-        <wwLayout path="rows" class="body" disable-edit tag="tbody">
-            <template #default="{ index: rowIndex, data: rowData }">
-                <TableRow
-                    :dataId="getId(rowData, rowIndex)"
-                    :rowIndex="rowIndex"
-                    :rowData="rowData"
-                    :cellElements="content.cellElements"
-                    :columns="content.columns"
-                    :rowElement="content.rowElement"
-                ></TableRow>
-            </template>
-        </wwLayout>
+        <wwLocalContext :data="{ data: content.rows, selection }" :methods="localMethods" elementKey="table">
+            <wwElement v-bind="content.headerRowElement" :wwProps="{ noDropzone: true }" tag="thead">
+                <template v-for="(col, index) in content.columns">
+                    <wwLocalContext :data="{ index, data: col }" elementKey="column">
+                        <wwElement v-bind="content.headerCellElements[index]" tag="th"></wwElement>
+                    </wwLocalContext>
+                </template>
+            </wwElement>
+            <wwLayout path="rows" class="body" disable-edit tag="tbody">
+                <template #default="{ index: rowIndex, data: rowData }">
+                    <TableRow
+                        :dataId="getId(rowData, rowIndex)"
+                        :rowIndex="rowIndex"
+                        :rowData="rowData"
+                        :cellElements="content.cellElements"
+                        :columns="content.columns"
+                        :rowElement="content.rowElement"
+                        :selection="selection"
+                        @update:selection="setSelection"
+                    ></TableRow>
+                </template>
+            </wwLayout>
+        </wwLocalContext>
     </table>
 </template>
 
@@ -27,15 +31,35 @@ import TableRow from './TableRow.vue';
 export default {
     props: {
         content: { type: Object, required: true },
+        uid: { type: String, required: true },
     },
     components: { TableRow },
     emits: [/* wwEditor:start */ 'update:content' /* wwEditor:end */],
-    setup() {
+    setup(props) {
         const { createElement } = wwLib.useCreateElement();
         const { resolveMappingFormula } = wwLib.wwFormula.useFormula();
+
+        const { value: selection, setValue: setSelection } = wwLib.wwVariable.useComponentVariable({
+            uid: props.uid,
+            name: 'selection',
+            defaultValue: [],
+            type: 'array',
+        });
+
         return {
             createElement,
             resolveMappingFormula,
+            selection,
+            setSelection,
+            localMethods: {
+                setSelection: {
+                    method: setSelection,
+                    editor: {
+                        label: 'Set Selection',
+                        description: 'Set the selection of the table',
+                    },
+                },
+            },
         };
     },
     computed: {
@@ -53,7 +77,7 @@ export default {
     },
     methods: {
         getId(rowData, index) {
-            return this.resolveMappingFormula(this.content.idFormula, { item: rowData, index });
+            return this.resolveMappingFormula(this.content.idFormula, { row: rowData, index });
         },
         /* wwEditor:start */
         async addColumn() {
