@@ -1,11 +1,19 @@
 <template>
     <table class="ww-data-grid" :style="tableStyle">
         <wwLocalContext :data="{ data: content.rows, selection }" :methods="localMethods" elementKey="table">
-            <wwElement v-bind="content.headerRowElement" :wwProps="{ noDropzone: true }" tag="thead">
-                <template v-for="(col, index) in content.columns">
-                    <wwLocalContext :data="{ index, data: col }" elementKey="column">
-                        <wwElement v-bind="content.headerCellElements[index]" tag="th"></wwElement>
-                    </wwLocalContext>
+            <wwElement
+                v-bind="content.headerRowElement"
+                :wwProps="{ noDropzone: true, overrideDisplayValues: ['table-header-group'] }"
+                tag="thead"
+            >
+                <template v-for="(column, index) in content.columns">
+                    <TableHeadCell
+                        :cellElement="content.headerCellElements[index]"
+                        :column="column"
+                        :index="index"
+                        :sortValue="sortValue"
+                        @update:sortValue="setSortValue"
+                    ></TableHeadCell>
                 </template>
             </wwElement>
             <wwLayout path="rows" class="body" disable-edit tag="tbody">
@@ -27,13 +35,14 @@
 </template>
 
 <script>
+import TableHeadCell from './TableHeadCell.vue';
 import TableRow from './TableRow.vue';
 export default {
     props: {
         content: { type: Object, required: true },
         uid: { type: String, required: true },
     },
-    components: { TableRow },
+    components: { TableRow, TableHeadCell },
     emits: [/* wwEditor:start */ 'update:content' /* wwEditor:end */],
     setup(props) {
         const { createElement } = wwLib.useCreateElement();
@@ -46,17 +55,87 @@ export default {
             type: 'array',
         });
 
+        const { value: sortValue, setValue: setSortValue } = wwLib.wwVariable.useComponentVariable({
+            uid: props.uid,
+            name: 'sort',
+            defaultValue: null,
+            type: 'object',
+        });
+
         return {
             createElement,
             resolveMappingFormula,
             selection,
             setSelection,
+            sortValue,
+            setSortValue,
             localMethods: {
                 setSelection: {
                     method: setSelection,
                     editor: {
                         label: 'Set Selection',
                         description: 'Set the selection of the table',
+                        group: 'Datagrid',
+                    },
+                },
+                setSort: {
+                    method: setSortValue,
+                    editor: {
+                        label: 'Set Sort',
+                        description: 'Set the sort value of the table',
+                        group: 'Datagrid',
+                    },
+                },
+                setSortField: {
+                    method: (field, order) => {
+                        setSortValue({ field, order: sortValue.value?.order || order || 'asc' });
+                    },
+                    editor: {
+                        label: 'Set Sort Field',
+                        description: 'Set the sort field of the table',
+                        group: 'Datagrid',
+                        args: [
+                            {
+                                name: 'field',
+                                type: 'string',
+                                required: true,
+                            },
+                            {
+                                name: 'order',
+                                type: 'string',
+                            },
+                        ],
+                    },
+                },
+                setSortOrder: {
+                    method: order => {
+                        setSortValue({ field: sortValue.value?.field, order });
+                    },
+                    editor: {
+                        label: 'Set Sort Order',
+                        description: 'Set the sort order of the table',
+                        group: 'Datagrid',
+                        args: [
+                            {
+                                name: 'order',
+                                type: 'string',
+                                required: true,
+                            },
+                        ],
+                    },
+                },
+                toggleSortOrder: {
+                    method: () => {
+                        if (!sortValue.value) return;
+                        setSortValue({
+                            field: sortValue.value.field,
+                            order: sortValue.value.order === 'asc' ? 'desc' : 'asc',
+                        });
+                    },
+                    editor: {
+                        label: 'Toggle Sort Order',
+                        description: 'Toggle the sort order of the table',
+                        group: 'Datagrid',
                     },
                 },
             },

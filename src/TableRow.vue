@@ -4,7 +4,7 @@
         :methods="localMethods"
         elementKey="row"
     >
-        <wwElement v-bind="rowElement" :wwProps="{ noDropzone: true }" tag="tr">
+        <wwElement v-bind="rowElement" :wwProps="{ noDropzone: true, overrideDisplayValues: ['table-row'] }" tag="tr">
             <template v-for="(column, colIndex) in columns">
                 <TableCell
                     :index="colIndex"
@@ -65,6 +65,7 @@ export default {
                     editor: {
                         label: 'Select',
                         description: 'Select the row',
+                        group: 'Datagrid',
                     },
                 },
                 unselect: {
@@ -72,6 +73,7 @@ export default {
                     editor: {
                         label: 'Unselect',
                         description: 'Unselect the row',
+                        group: 'Datagrid',
                     },
                 },
                 toggle: {
@@ -79,6 +81,7 @@ export default {
                     editor: {
                         label: 'Toggle Selection',
                         description: 'Toggle the selection of the row',
+                        group: 'Datagrid',
                     },
                 },
             },

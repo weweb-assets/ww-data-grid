@@ -25,22 +25,6 @@ export default {
             en: 'DataGrid',
         },
         icon: 'table',
-        // customStylePropertiesOrder: [
-        //     'verticalAlignement',
-        //     'alternateBackground',
-        //     ['rowBackgroundColor', 'rowBackgroundColorAlt', 'rowBackgroundColorHover', 'rowBackgroundColorSelected'],
-        //     'displayHeader',
-        //     'hasStickyHeader',
-        //     'headerBackgroundColor',
-        //     'isTrBorderSplit',
-        //     ['trBorders', 'trBordersVertical', 'trBordersHorizontal'],
-        //     'isTdBorderSplit',
-        //     ['tdBorders', 'tdBordersVertical', 'tdBordersHorizontal'],
-        //     'isTheadBorderSplit',
-        //     ['theadBorders', 'theadBordersVertical', 'theadBordersHorizontal'],
-        //     'isThBorderSplit',
-        //     ['thBorders', 'thBordersVertical', 'thBordersHorizontal'],
-        // ],
     },
     options: {
         displayAllowedValues: ['table'],
@@ -165,6 +149,10 @@ export default {
                                 label: 'Label',
                                 type: 'Text',
                                 bindable: true,
+                            },
+                            id: {
+                                label: 'Key',
+                                type: 'Text',
                             },
                             valueFormula: {
                                 type: 'Formula',

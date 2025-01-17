@@ -1,6 +1,6 @@
 <template>
     <wwLocalContext :data="{ index, column, data }" elementKey="cell">
-        <wwElement v-bind="cellElement" tag="td"></wwElement>
+        <wwElement v-bind="cellElement" tag="td" :wwProps="{ overrideDisplayValues: ['table-cell'] }"></wwElement>
     </wwLocalContext>
 </template>
 
