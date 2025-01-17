@@ -1,6 +1,6 @@
 <template>
     <wwLocalContext
-        :data="{ data: rowData, index: rowIndex, id: dataId, isSelected }"
+        :data="{ data: rowData, index: rowIndex, id: dataId, isSelected, isEditing, editingData }"
         :methods="localMethods"
         elementKey="row"
     >
@@ -19,8 +19,9 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import TableCell from './TableCell.vue';
+
 export default {
     props: {
         cellElements: { type: Array, required: true },
@@ -36,6 +37,8 @@ export default {
     setup(props, { emit }) {
         const { resolveMappingFormula } = wwLib.wwFormula.useFormula();
         const isSelected = computed(() => props.selection.includes(props.dataId));
+        const isEditing = ref(false);
+        const editingData = ref(null);
 
         function select() {
             if (isSelected.value) return;
@@ -55,10 +58,22 @@ export default {
                 select();
             }
         }
+        function toggleEditing() {
+            isEditing.value = !isEditing.value;
+        }
+        function setIsEditing(value) {
+            isEditing.value = value;
+        }
+        function setEditingData(data) {
+            editingData.value = data;
+        }
 
         return {
             resolveMappingFormula,
             isSelected,
+            isEditing,
+            setIsEditing,
+            editingData,
             localMethods: {
                 select: {
                     method: select,
@@ -82,6 +97,44 @@ export default {
                         label: 'Toggle Selection',
                         description: 'Toggle the selection of the row',
                         group: 'Datagrid row',
+                    },
+                },
+                toggleEditing: {
+                    method: toggleEditing,
+                    editor: {
+                        label: 'Toggle Editing',
+                        description: 'Toggle the editing of the row',
+                        group: 'Datagrid row',
+                    },
+                },
+                setIsEditing: {
+                    method: setIsEditing,
+                    editor: {
+                        label: 'Set Is Editing',
+                        description: 'Set the editing of the row',
+                        group: 'Datagrid row',
+                        args: [
+                            {
+                                name: 'value',
+                                type: 'boolean',
+                                required: true,
+                            },
+                        ],
+                    },
+                },
+                setEditingData: {
+                    method: setEditingData,
+                    editor: {
+                        label: 'Set Editing data',
+                        description: '',
+                        group: 'Datagrid row',
+                        args: [
+                            {
+                                name: 'value',
+                                type: 'any',
+                                required: true,
+                            },
+                        ],
                     },
                 },
             },

@@ -29,22 +29,6 @@ export default {
     options: {
         displayAllowedValues: ['table'],
     },
-    // triggerEvents: [
-    //     {
-    //         name: 'update:row',
-    //         label: { en: 'On Row update' },
-    //         event: { value: '', id: '', cancel: () => {} },
-    //         getTestEvent: 'getTestEvent',
-    //         default: true,
-    //     },
-    //     {
-    //         name: 'delete:row',
-    //         label: { en: 'On Row delete' },
-    //         event: { value: '', id: '' },
-    //         getTestEvent: 'getTestEvent',
-    //     },
-    //     { name: 'sort', label: { en: 'On Sort' }, event: { value: '', column: '' } },
-    // ],
     properties: {
         headerRowElement: {
             hidden: true,
