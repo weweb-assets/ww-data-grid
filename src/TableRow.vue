@@ -65,7 +65,7 @@ export default {
                     editor: {
                         label: 'Select',
                         description: 'Select the row',
-                        group: 'Datagrid',
+                        group: 'Datagrid row',
                     },
                 },
                 unselect: {
@@ -73,7 +73,7 @@ export default {
                     editor: {
                         label: 'Unselect',
                         description: 'Unselect the row',
-                        group: 'Datagrid',
+                        group: 'Datagrid row',
                     },
                 },
                 toggle: {
@@ -81,7 +81,7 @@ export default {
                     editor: {
                         label: 'Toggle Selection',
                         description: 'Toggle the selection of the row',
-                        group: 'Datagrid',
+                        group: 'Datagrid row',
                     },
                 },
             },

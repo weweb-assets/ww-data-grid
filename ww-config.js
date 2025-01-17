@@ -153,6 +153,9 @@ export default {
                             id: {
                                 label: 'Key',
                                 type: 'Text',
+                                propertyHelp: {
+                                    tooltip: 'Unique key for the column. Only use for sort method.',
+                                },
                             },
                             valueFormula: {
                                 type: 'Formula',
@@ -162,6 +165,9 @@ export default {
                                         ? { row: content.rows[0], index: 0 }
                                         : { row: null, index: 0 },
                                 }),
+                                propertyHelp: {
+                                    tooltip: 'Value formula for the cell. Will be used to populate the cell with data.',
+                                },
                             },
                         },
                     },

@@ -27,8 +27,8 @@ export default {
                     },
                     editor: {
                         label: 'Toggle Sort',
-                        icon: 'sort',
-                        group: 'Datagrid',
+                        group: 'Datagrid header',
+                        description: 'Toggle the sort order of this column',
                     },
                 },
                 sort: {
@@ -40,14 +40,14 @@ export default {
                     },
                     editor: {
                         label: 'Sort',
-                        icon: 'sort',
-                        group: 'Datagrid',
+                        group: 'Datagrid header',
                         args: [
                             {
                                 name: 'order',
                                 type: 'string',
                             },
                         ],
+                        description: 'Set the sort order of this column',
                     },
                 },
             },
