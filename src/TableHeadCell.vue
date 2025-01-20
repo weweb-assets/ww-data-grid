@@ -22,7 +22,7 @@ export default {
                     method: () => {
                         emit('update:sortValue', {
                             field: props.column.id ?? props.column.name ?? props.index,
-                            order: props.sortValue === 'asc' ? 'dsc' : 'asc',
+                            order: props.sortValue?.order === 'asc' ? 'dsc' : 'asc',
                         });
                     },
                     editor: {
