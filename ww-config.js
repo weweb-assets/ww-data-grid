@@ -33,18 +33,30 @@ export default {
         headerRowElement: {
             hidden: true,
             defaultValue: { isWwObject: true, type: 'ww-flexbox', name: 'Header' },
+            navigator: {
+                group: 'Header',
+            },
         },
         rowElement: {
             hidden: true,
             defaultValue: { isWwObject: true, type: 'ww-flexbox', name: 'Row' },
+            navigator: {
+                group: 'Row',
+            },
         },
         cellElements: {
             hidden: true,
             defaultValue: [],
+            navigator: {
+                group: 'Row',
+            },
         },
         headerCellElements: {
             hidden: true,
             defaultValue: [],
+            navigator: {
+                group: 'Header',
+            },
         },
         borderCollapse: {
             label: 'Border collapse',
