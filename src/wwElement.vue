@@ -16,15 +16,15 @@
                     ></TableHeadCell>
                 </template>
             </wwElement>
-            <wwLayout path="rows" class="body" disable-edit tag="tbody">
-                <template #default="{ index: rowIndex, data: rowData }">
+            <wwLayout path="rows" class="body" tag="tbody">
+                <template #default="{ index: rowIndex, data: rowData, item }">
                     <TableRow
                         :dataId="getId(rowData, rowIndex)"
                         :rowIndex="rowIndex"
                         :rowData="rowData"
                         :cellElements="content.cellElements"
                         :columns="content.columns"
-                        :rowElement="content.rowElement"
+                        :rowElement="item"
                         :selection="selection"
                         @update:selection="setSelection"
                     ></TableRow>

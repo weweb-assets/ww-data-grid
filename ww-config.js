@@ -37,12 +37,37 @@ export default {
                 group: 'Header',
             },
         },
-        rowElement: {
-            hidden: true,
-            defaultValue: { isWwObject: true, type: 'ww-flexbox', name: 'Row' },
+        rows: {
+            label: {
+                en: 'Rows',
+            },
+            type: 'Repeat',
+            options: {
+                forcedBind: true,
+            },
+            bindable: 'repeatable',
+            defaultValue: {
+                repeatable: [{ isWwObject: true, type: 'ww-flexbox', name: 'Row' }],
+                __wwtype: 'd',
+                data: [],
+            },
+            section: 'settings',
             navigator: {
                 group: 'Row',
             },
+            /* wwEditor:start */
+            bindingValidation: {
+                validations: [
+                    {
+                        type: 'array',
+                    },
+                    {
+                        type: 'object',
+                    },
+                ],
+                tooltip: 'A collection or an array of data: \n\n`myCollection` or `[{}, {}, ...]`',
+            },
+            /* wwEditor:end */
         },
         cellElements: {
             hidden: true,
@@ -96,31 +121,6 @@ export default {
             responsive: true,
             classes: true,
             bindingValidation: { markdown: 'table-layout', type: 'string' },
-        },
-        rows: {
-            label: {
-                en: 'Rows',
-            },
-            type: 'ObjectList',
-            options: {
-                useSchema: true,
-            },
-            bindable: true,
-            defaultValue: [],
-            section: 'settings',
-            /* wwEditor:start */
-            bindingValidation: {
-                validations: [
-                    {
-                        type: 'array',
-                    },
-                    {
-                        type: 'object',
-                    },
-                ],
-                tooltip: 'A collection or an array of data: \n\n`myCollection` or `[{}, {}, ...]`',
-            },
-            /* wwEditor:end */
         },
         idFormula: {
             type: 'Formula',
