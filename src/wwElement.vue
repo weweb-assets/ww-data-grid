@@ -77,14 +77,32 @@ export default {
                         description: 'Set the selection of the table',
                         group: 'Datagrid',
                     },
+                    args: [
+                        {
+                            name: 'ids',
+                            type: 'Array',
+                            required: true,
+                        },
+                    ],
                 },
                 setSort: {
-                    method: setSortValue,
+                    method: (field, order) => setSortValue({ field, order }),
                     editor: {
                         label: 'Set Sort',
                         description: 'Set the sort value of the table',
                         group: 'Datagrid',
                     },
+                    args: [
+                        {
+                            name: 'field',
+                            type: 'string',
+                            required: true,
+                        },
+                        {
+                            name: 'order',
+                            type: 'string',
+                        },
+                    ],
                 },
                 setSortField: {
                     method: (field, order) => {
