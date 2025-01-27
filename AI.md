@@ -40,10 +40,12 @@ Properties:
     - valueFormula: Data mapping formula (Formula type)
 
 Children:
-- rows: any - Data source for the grid rows (should be repeatable over the data source)
-- headerRowElement: ww-flexbox - Container element for the table header
-- cellElements: any[] - Array of cell template elements (default: [])
-- headerCellElements any[] - Array of header cell template elements (default: [])
+- rows: ww-flexbox - This is the div wrapper for the row, the cellElements are the children. If possible you must use display table-row.
+- headerRowElement: ww-flexbox - This is the div wrapper for the header row, the headerCellElements are the children. If possible you must use display table-header-group.
+- cellElements: ww-flexbox[] - Array of cell template elements, in the same order as the columns prop. If possible you must use display table-cell.
+- headerCellElements ww-flexbox[] - Array of header cell template elements, in the same order as the columns prop. If possible you must use display table-cell.
+
+IMPORTANT: All the 4 children are required, the ww-data-grid will not work without them. The cellElements and headerCellElements must have as many children as the columns prop (and in the same order).
 
 Variables:
 - selection: Array of selected row IDs
@@ -65,8 +67,387 @@ Context:
 - context.local.data.row.index - The index of the current row
 - context.local.data.row.data - The data of the current row
 - context.local.data.cell.isEditing - Whether the current cell is being edited
+Prefer not using context.item whenever possible.
+
+Important:
+- All the children must be ww-flexbox elements.
+- Use table-* display unless you really can't do otherwise.
+- When creating a new data grid, you must include all the 4 children: rows, headerRowElement, cellElements and headerCellElements.
+- To display the row index, you can use `return context.local.data?.['row']?.['index']` as a formula binding.
+- To add a new column, you have to rewrite the columns prop (update path), add children to the headerCellElements array, and add children to the cellElements array.
+- If you want to update the display of a cell, because you can only use display: table-cell on the cell element, you have to wrap the children element with a ww-flexbox. (using a replace)
 
 Example:
-{"tag":"ww-data-grid","props":{"default":{"columns":[{"flex":"1","name":"Selection","width":"100%","sizing":"flex","display":true,"editable":"auto","maxWidth":"auto","minWidth":"auto","sortable":true,"selectable":"auto"},{"flex":"1","name":"Name","width":"100%","sizing":"flex","display":true,"editable":"auto","maxWidth":"auto","minWidth":"auto","sortable":true,"selectable":"auto"},{"flex":"1","name":"Unit","width":"100%","sizing":"flex","display":true,"editable":"auto","maxWidth":"auto","minWidth":"auto","sortable":true,"selectable":"auto"},{"flex":"1","name":"Column 5","width":"100%","sizing":"flex","display":true,"editable":"auto","maxWidth":"auto","minWidth":"auto","sortable":true,"selectable":"auto"}],"idFormula":{"code":"context.mapping?.['row']?.['id']","type":"f"},"tableLayout":"auto","_ww-table_layout":"auto","_ww-table_borderCollapse":"collapse"},"repeat":{"rows":{"__wwtype":"f","code":"[{\"id\":\"1\",\"name\":\"Flour\",\"unit\":\"kg\"},{\"id\":\"2\",\"name\":\"Milk\",\"unit\":\"L\"},{\"id\":\"3\",\"name\":\"Honey\",\"unit\":\"spoon\"}]"}}},"style":{"default":{"width":"90%","display":"table"}},"children":{"rows":[{"tag":"ww-flexbox","name":"Row","style":{"default":{"padding":"8px","backgroundColor":{"code":"if (context.local.data?.['row']?.['isSelected']) return 'lightblue'\r\n\r\nreturn context.local.data?.['row']?.['index']%2==0?\"lightgrey\":\"white\"","__wwtype":"js"}}}}],"cellElements":[{"tag":"ww-flexbox","name":"Cell - Selection","style":{"default":{"alignItems":"center","flexDirection":"column","justifyContent":"center","verticalAlign":"middle}"}},"children":{"children":[{"tag":"ww-input-checkbox","name":"Checkbox","settings":{"interactions":[{"id":"bcb2260d","actions":{"d743a7e0":{"id":"d743a7e0","type":"_wwLocalMethod_row.toggle"}},"trigger":"change","firstAction":"d743a7e0"}]},"props":{"default":{"value":{"code":"context.local.data?.['row']?.['isSelected']","__wwtype":"f"},"readonly":false,"required":false,"containerPosition":"right","isEmbeddedContainer":false}},"style":{"default":{"flex":"0 1 auto","align":"center","display":"flex"}},"children":{"checkbox":{"tag":"ww-checkbox","states":[{"id":"R0Xabo","label":"checked"}],"settings":{"interactions":[{"id":"d33aa300","actions":{},"trigger":"click"}]},"props":{"default":{"icon":"fas fa-check","color":"transparent","fontSize":10},"R0Xabo_default":{"color":"#FFFFFF"}},"style":{"default":{"width":"auto","border":"1px solid #767676","cursor":"pointer","height":"auto","padding":"2px","borderRadius":"4px","backgroundColor":"#FFFFFF"},"R0Xabo_default":{"backgroundColor":"#767676"}}}}}]}},{"tag":"ww-flexbox","name":"Cell - Name","settings":{"interactions":[{"id":"26d3a0b4","actions":{},"trigger":"click"}]},"style":{"default":{"display":"table-cell"}},"children":{"children":[{"tag":"ww-text","settings":{"interactions":[{"id":"0b2a9c63","icon":"cursor","name":"Untitled workflow","index":0,"actions":{"9a69b395":{"id":"9a69b395","args":[true],"type":"_wwLocalMethod_cell.setIsEditing"}},"trigger":"click","isSearched":false,"description":"On click","firstAction":"9a69b395"}]},"props":{"default":{"tag":"p","bgColor":"","shadows":"","fontStyle":"ww-font-style-text","textColor":"","transformation":"","text":{"en":{"code":"context.local.data?.['row']?.['data']?.['name']","__wwtype":"f","defaultValue":"<p>This is some text</p>"}}}},"style":{"default":{"padding":"12px","conditionalRendering":{"code":"! context.local.data?.['cell']?.['isEditing']","__wwtype":"f","defaultValue":true},"fontSize":"16px","textAlign":"center"},"tablet":{}}},{"tag":"ww-input-basic","props":{"default":{"max":10000,"min":0,"cols":10,"rows":4,"step":1,"type":"text","color":"#000000","value":{"code":"context.local.data?.['row']?.['data']?.['name']","__wwtype":"f","defaultValue":""},"resize":false,"maxDate":"","minDate":"","debounce":false,"fontSize":"15px","readonly":false,"required":false,"fieldName":"","isTooltip":true,"precision":"0.1","fontFamily":"","hideArrows":false,"transition":"500ms","validation":"","placeholder":{"en":"Placeholder"},"autocomplete":false,"debounceDelay":"500ms","timePrecision":1,"forceAnimation":false,"timingFunction":"cubic-bezier(0, 1.08, 0.76, 1)","displayPassword":false,"animationTrigger":"input","customValidation":false,"positioningAjustment":"0px"}},"style":{"default":{"border":"1px solid #E0E0E0","height":"36px","margin":"0px 0px 0px 0px","padding":"8px","borderRadius":"8px","backgroundColor":"#FFFFFF","conditionalRendering":{"code":"context.local.data?.['cell']?.['isEditing']","__wwtype":"f","defaultValue":true},"fontSize":"14px"}}}]}},{"tag":"ww-flexbox","name":"Cell - Unit","style":{"default":{"width":"20px","display":"table-cell","padding":"12px"}},"children":{"children":[{"tag":"ww-text","props":{"default":{"tag":"p","bgColor":"","shadows":"","fontStyle":"ww-font-style-text","textColor":"","transformation":"","text":{"en":{"code":"context.local.data?.['row']?.['data']?.['unit']","__wwtype":"f","defaultValue":"No value"}}}},"style":{"default":{"fontSize":"16px","textAlign":"right"},"tablet":{}}}]}},{"tag":"ww-flexbox","name":"Cell - Actions","style":{"default":{}},"children":{"children":[{"tag":"ww-flexbox","style":{"default":{"alignItems":"center","flexDirection":"row","justifyContent":"center"}},"children":{"children":[{"tag":"ww-button","settings":{"interactions":[{"id":"a974403a","actions":{"20374a8e":{"id":"20374a8e","args":[true],"type":"_wwLocalMethod_row.setIsEditing"}},"trigger":"click","firstAction":"20374a8e"}]},"props":{"default":{"disabled":false,"fontStyle":"ww-font-style-text","buttonType":"button","hasLeftIcon":false,"hasRightIcon":false,"text":{"en":"<div>Edit</div>"}}},"style":{"default":{"width":"auto","cursor":"pointer","height":"38px","padding":"8px 16px","aspectRatio":"unset","borderRadius":"6px","backgroundColor":"#000000","conditionalRendering":{"code":"!context.local.data?.['row']?.['isEditing']","__wwtype":"f","defaultValue":true},"color":"#FFFFFF","fontSize":"14px","textAlign":"left","fontWeight":500,"lineHeight":"20px"}}},{"tag":"ww-button","settings":{"interactions":[{"id":"e997289a","actions":{"cb1bae23":{"id":"cb1bae23","type":"_wwLocalMethod_row.setIsEditing"}},"trigger":"click","firstAction":"cb1bae23"}]},"props":{"default":{"disabled":false,"fontStyle":"ww-font-style-text","buttonType":"button","hasLeftIcon":false,"hasRightIcon":false,"text":{"en":"<div>Cancel</div>"}}},"style":{"default":{"cursor":"pointer","height":"38px","padding":"8px 16px","aspectRatio":"unset","borderRadius":"6px","backgroundColor":"#000000","conditionalRendering":{"code":"context.local.data?.['row']?.['isEditing']","__wwtype":"f","defaultValue":true},"color":"#FFFFFF","fontSize":"14px","fontWeight":500,"lineHeight":"20px"}}}]}}]}}],"headerRowElement":{"tag":"ww-flexbox","name":"Header","style":{"default":{"display":"table-header-group","backgroundColor":"#845252"}}},"headerCellElements":[{"tag":"ww-flexbox","name":"Header - Selection","style":{"default":{"display":"table-cell"}}},{"tag":"ww-flexbox","name":"Header - Name","style":{"default":{"display":"table-cell","padding":"12px"}},"children":{"children":[{"tag":"ww-flexbox","style":{"default":{"alignItems":"center","flexDirection":"row"}},"children":{"children":[{"tag":"ww-text","props":{"default":{"tag":"p","bgColor":"","shadows":"","fontStyle":"ww-font-style-text","textColor":"","transformation":"","text":{"en":{"code":"context.local.data?.['column']?.['data']?.['name']","__wwtype":"f","defaultValue":"<p>This is some text</p>"}}}},"style":{"default":{"fontSize":"16px"},"tablet":{}}},{"tag":"ww-flexbox","style":{"default":{"flexDirection":"column"}},"children":{"children":[{"tag":"ww-icon","settings":{"interactions":[{"id":"3fa0b754","actions":{"a4bde638":{"id":"a4bde638","args":["desc"],"type":"_wwLocalMethod_column.sort"}},"trigger":"click","firstAction":"a4bde638"}]},"props":{"default":{"icon":"wwi wwi-chevron-up","color":"#0a0a0a","fontSize":20}},"style":{"default":{"padding":"0px","transform":"translate3d(0px,0px,0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)","borderRadius":"auto"}}},{"tag":"ww-icon","settings":{"interactions":[{"id":"8bd1bf87","actions":{"2e57b59e":{"id":"2e57b59e","args":["asc"],"type":"_wwLocalMethod_column.sort"}},"trigger":"click","firstAction":"2e57b59e"}]},"props":{"default":{"icon":"wwi wwi-chevron-down","color":"#0a0a0a","fontSize":20}},"style":{"default":{"padding":"0px","transform":"translate3d(0px,0px,0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)","borderRadius":"auto"}}}]}}]}}]}},{"tag":"ww-flexbox","name":"Header - Unit","style":{"default":{"display":"table-cell"}},"children":{"children":[{"tag":"ww-flexbox","style":{"default":{"alignItems":"center","flexDirection":"row"}},"children":{"children":[{"tag":"ww-text","props":{"default":{"tag":"p","bgColor":"","shadows":"","fontStyle":"ww-font-style-text","textColor":"","transformation":"","text":{"en":{"code":"context.local.data?.['column']?.['data']?.['name']","__wwtype":"f","defaultValue":"<p>This is some text</p>"}}}},"style":{"default":{"fontSize":"16px"},"tablet":{}}},{"tag":"ww-flexbox","style":{"default":{"flexDirection":"column"}},"children":{"children":[{"tag":"ww-icon","settings":{"interactions":[{"id":"3fa0b754","actions":{"a4bde638":{"id":"a4bde638","args":["desc"],"type":"_wwLocalMethod_column.sort"}},"trigger":"click","firstAction":"a4bde638"}]},"props":{"default":{"icon":"wwi wwi-chevron-up","color":"#0a0a0a","fontSize":20}},"style":{"default":{"padding":"0px","transform":"translate3d(0px,0px,0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)","borderRadius":"auto"}}},{"tag":"ww-icon","settings":{"interactions":[{"id":"8bd1bf87","actions":{"2e57b59e":{"id":"2e57b59e","args":["asc"],"type":"_wwLocalMethod_column.sort"}},"trigger":"click","firstAction":"2e57b59e"}]},"props":{"default":{"icon":"wwi wwi-chevron-down","color":"#0a0a0a","fontSize":20}},"style":{"default":{"padding":"0px","transform":"translate3d(0px,0px,0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg)","borderRadius":"auto"}}}]}}]}}]}},{"tag":"ww-flexbox","name":"Header - Actions","style":{"default":{}}}]}}
-
-IMPORTANT: When creating a data grid, always start from the example above and then modify it to your needs.
+[
+  {
+    "tag": "ww-flexbox",
+    "name": "Recipe Management Section",
+    "styles": {"default":{"flexDirection":"column"}},
+    "children": {
+      "children": [
+        {
+          "tag": "ww-flexbox",
+          "name": "Header Container",
+          "styles": {"default":{"flexDirection":"row","justifyContent":"space-between"}},
+          "children": {
+            "children": [
+              {
+                "tag": "ww-text",
+                "name": "Page Title",
+                "props": {"default":{"tag":"h1","text":{"en":"Recipe Management"}}}
+              },
+              {
+                "tag": "ww-button",
+                "name": "Add Recipe Button",
+                "props": {"default":{"text":{"en":"Add New Recipe"},"disabled":false,"buttonType":"button","hasLeftIcon":true}},
+                "children": {
+                  "leftIcon": {
+                    "tag": "ww-icon",
+                    "name": "Add Icon",
+                    "props": {"default":{"icon":"fas fa-plus","color":"#FFFFFF","fontSize":14}}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "tag": "ww-data-grid",
+          "name": "Recipe Grid",
+          "settings": {"dynamicConfiguration":{"content":{"rows":[{"key":"label","type":"Text"},{"key":"value","type":"Text"}]}}},
+          "props": {"default":{"columns":[{"flex":"0","name":"Image","width":"80px","sortable":false},{"flex":"2","name":"Name","sortable":true},{"flex":"1","name":"Category","sortable":true},{"flex":"1","name":"Preparation Time","sortable":true},{"flex":"1","name":"Difficulty","sortable":true},{"flex":"1","name":"Status","sortable":true},{"flex":"1","name":"Actions","sortable":false}],"idFormula":{"code":"context.mapping?.['row']?.['id']","type":"f"}},"repeat":{"rows":{"__wwtype":"js","code":"return wwFormulas.sort([{\"id\":\"1\",\"image\":\"https://images.unsplash.com/photo-1546069901-ba9599a7e63c\",\"name\":\"Healthy Salad Bowl\",\"category\":\"Healthy\",\"prepTime\":\"20 min\",\"difficulty\":\"Easy\",\"status\":\"Published\"},{\"id\":\"2\",\"image\":\"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38\",\"name\":\"Classic Margherita Pizza\",\"category\":\"Italian\",\"prepTime\":\"45 min\",\"difficulty\":\"Medium\",\"status\":\"Draft\"},{\"id\":\"3\",\"image\":\"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445\",\"name\":\"Chocolate Cake\",\"category\":\"Desserts\",\"prepTime\":\"90 min\",\"difficulty\":\"Hard\",\"status\":\"Published\"}],variables['44f6fcc8-7a4c-4bbb-84cf-f0995e0d6a89-sort']?.['order'],wwFormulas.lowercase(wwFormulas.ifEmpty(variables['44f6fcc8-7a4c-4bbb-84cf-f0995e0d6a89-sort']?.['field'],\"category\")))"}}},
+          "styles": {"default":{"width":"100%","border":"1px solid #e2e8f0","overflow":"hidden","borderRadius":"8px","backgroundColor":"#ffffff"}},
+          "children": {
+            "rows": [
+              {
+                "tag": "ww-flexbox",
+                "name": "Recipe Row",
+                "styles": {"default":{"display":"table-row"}}
+              }
+            ],
+            "cellElements": [
+              {
+                "tag": "ww-flexbox",
+                "name": "Image Cell",
+                "styles": {"default":{"width":"80px","height":"48px","display":"table-cell","padding":"8px","alignItems":"center"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-image",
+                      "name": "Recipe Image",
+                      "props": {"default":{"alt":{"en":{"code":"context.item?.['data']?.['name']","__wwtype":"f"}},"url":{"code":"context.item?.['data']?.['image']","__wwtype":"f"},"loading":"lazy","objectFit":"cover"}},
+                      "styles": {"default":{"width":"100%","height":"100%","boxShadow":"0px 1px 3px 0px #000","borderRadius":"6px","aspectRatio":"unset"}}
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Name Cell Container",
+                "styles": {"default":{"display":"table-cell"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-text",
+                      "name": "Name Cell",
+                      "props": {"default":{"tag":"p","text":{"en":{"code":"context.item?.['data']?.['name']","__wwtype":"f"}}}},
+                      "styles": {"default":{"padding":"8px","color":"#1e293b","fontSize":"14px","fontWeight":"500"}}
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Category Cell Container",
+                "styles": {"default":{"display":"table-cell"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-text",
+                      "name": "Category Cell",
+                      "props": {"default":{"tag":"p","text":{"en":{"code":"context.item?.['data']?.['category']","__wwtype":"f"}}}},
+                      "styles": {"default":{"padding":"8px","color":"#64748b","fontSize":"14px"}}
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Prep Time Cell",
+                "styles": {"default":{"display":"table-cell","padding":"8px","rowGap":"6px","columnGap":"6px","alignItems":"center"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-flexbox",
+                      "styles": {"default":{"columnGap":"10px","flexDirection":"row","justifyContent":"center"}},
+                      "children": {
+                        "children": [
+                          {
+                            "tag": "ww-text",
+                            "name": "Time Text",
+                            "props": {"default":{"tag":"p","text":{"en":{"code":"context.item?.['data']?.['prepTime']","__wwtype":"f"}}}},
+                            "styles": {"default":{"color":"#64748b","fontSize":"14px"}}
+                          },
+                          {
+                            "tag": "ww-icon",
+                            "name": "Time Icon",
+                            "props": {"default":{"icon":"fas fa-clock","color":"#64748b","fontSize":"14px"}}
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Difficulty Cell",
+                "styles": {"default":{"display":"table-cell","padding":"8px","rowGap":"6px","columnGap":"6px","alignItems":"center"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-flexbox",
+                      "styles": {"default":{"columnGap":"10px","alignItems":"flex-end","flexDirection":"row","justifyContent":"center"}},
+                      "children": {
+                        "children": [
+                          {
+                            "tag": "ww-text",
+                            "name": "Difficulty Text",
+                            "props": {"default":{"tag":"p","text":{"en":{"code":"context.item?.['data']?.['difficulty']","__wwtype":"f"}}}},
+                            "styles": {"default":{"color":{"code":"wwFormulas.switch(context.item?.['data']?.['difficulty'], 'Easy', '#22c55e', 'Medium', '#f59e0b', 'Hard', '#ef4444', '#64748b')","__wwtype":"f"},"fontSize":"14px"}}
+                          },
+                          {
+                            "tag": "ww-icon",
+                            "name": "Difficulty Icon",
+                            "props": {"default":{"icon":"fas fa-signal","color":{"code":"wwFormulas.switch(context.item?.['data']?.['difficulty'], 'Easy', '#22c55e', 'Medium', '#f59e0b', 'Hard', '#ef4444', '#64748b')","__wwtype":"f"},"fontSize":"14px"}}
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Status Cell",
+                "styles": {"default":{"display":"table-cell","padding":"8px","alignItems":"center"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-text",
+                      "name": "Status Badge",
+                      "props": {"default":{"tag":"p","text":{"en":{"code":"context.item?.['data']?.['status']","__wwtype":"f"}}}},
+                      "styles": {"default":{"padding":"4px 8px","borderRadius":"12px","backgroundColor":{"code":"wwFormulas.switch(context.item?.['data']?.['status'], 'Published', '#dcfce7', 'Draft', '#f1f5f9', '#f1f5f9')","__wwtype":"f"},"color":{"code":"wwFormulas.switch(context.item?.['data']?.['status'], 'Published', '#16a34a', 'Draft', '#64748b', '#64748b')","__wwtype":"f"},"fontSize":"12px","fontWeight":"500"}}
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Actions Cell",
+                "styles": {"default":{"display":"table-cell","padding":"8px","rowGap":"8px","columnGap":"8px","alignItems":"center","justifyContent":"flex-end"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-flexbox",
+                      "styles": {"default":{"columnGap":"10px","flexDirection":"row","justifyContent":"center"}},
+                      "children": {
+                        "children": [
+                          {
+                            "tag": "ww-button",
+                            "name": "Delete Button",
+                            "states": [{"id":"_wwHover","label":"hover"}],
+                            "props": {"default":{"text":{"en":""},"disabled":false,"buttonType":"button","hasLeftIcon":true}},
+                            "styles": {"default":{"padding":"6px","minHeight":"unset","borderRadius":"6px","backgroundColor":"#fee2e2"},"_wwHover_default":{"backgroundColor":"#fecaca"}},
+                            "children": {
+                              "leftIcon": {
+                                "tag": "ww-icon",
+                                "name": "Delete Icon",
+                                "states": [{"id":"_wwHover","label":"hover"}],
+                                "props": {"default":{"icon":"fas fa-trash","color":"#ef4444","fontSize":"14px"}}
+                              }
+                            }
+                          },
+                          {
+                            "tag": "ww-button",
+                            "name": "Edit Button",
+                            "states": [{"id":"_wwHover","label":"hover"}],
+                            "props": {"default":{"text":{"en":""},"disabled":false,"buttonType":"button","hasLeftIcon":true}},
+                            "styles": {"default":{"padding":"6px","minHeight":"unset","borderRadius":"6px","backgroundColor":"#f1f5f9"},"_wwHover_default":{"backgroundColor":"#e2e8f0"}},
+                            "children": {
+                              "leftIcon": {
+                                "tag": "ww-icon",
+                                "name": "Edit Icon",
+                                "states": [{"id":"_wwHover","label":"hover"}],
+                                "props": {"default":{"icon":"fas fa-pen","color":"#64748b","fontSize":"14px"}}
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ],
+            "headerRowElement": {
+              "tag": "ww-flexbox",
+              "name": "Header Row",
+              "styles": {"default":{"display":"table-header-group"}},
+              "children": {
+                "children": [
+                  {
+                    "tag": "ww-flexbox",
+                    "styles": {"default":{"display":"table-row"}},
+                    "children": {
+                      "children": [
+                        {
+                          "tag": "ww-text",
+                          "props": {"default":{"tag":"p","text":{"en":"<div><br></div>"}}},
+                          "styles": {"default":{"fontSize":"16px"}}
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "headerCellElements": [
+              {
+                "tag": "ww-flexbox",
+                "name": "Header Image Container",
+                "styles": {"default":{"display":"table-cell"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-text",
+                      "name": "Header Image",
+                      "props": {"default":{"tag":"p","text":{"en":"<div>Image</div>"}}},
+                      "styles": {"default":{"padding":"12px 16px","color":{"code":"globalContext.colors['5172739f-2906-4f10-a758-a1d4929606dc']","__wwtype":"f"},"fontSize":"14px","fontWeight":"600"}}
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Header Name Container",
+                "styles": {"default":{"display":"table-cell"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-flexbox",
+                      "styles": {"default":{"alignItems":"center","flexDirection":"row","justifyContent":"center"}},
+                      "children": {
+                        "children": [
+                          {
+                            "tag": "ww-text",
+                            "name": "Header Name",
+                            "states": [{"id":"_wwHover","label":"hover"}],
+                            "props": {"default":{"tag":"p","text":{"en":"<div>Name</div>"}}},
+                            "styles": {"default":{"cursor":"pointer","padding":"12px 16px","transition":"color 0.2s ease","color":{"code":"globalContext.colors['5172739f-2906-4f10-a758-a1d4929606dc']","__wwtype":"f"},"fontSize":"14px","fontWeight":"600","rowGap":"4px","columnGap":"4px","alignItems":"center"},"_wwHover_default":{"color":{"code":"globalContext.colors['c9179837-9d7e-4518-9fa7-8e065db8409d']","__wwtype":"f"}}}
+                          },
+                          {
+                            "tag": "ww-button",
+                            "name": "Sort Button",
+                            "settings": {"interactions":[{"id":"5d6b8ddd-0ce5-4352-897c-c11b8e33c9c3","trigger":"click","actions":{"c9d5a869-71a9-4525-a9cd-944cf88a2b3a":{"id":"c9d5a869-71a9-4525-a9cd-944cf88a2b3a","type":"_wwLocalMethod_column.toggleSort"}},"name":"Sort By Name","firstAction":"c9d5a869-71a9-4525-a9cd-944cf88a2b3a"}]},
+                            "props": {"default":{"disabled":false,"fontStyle":"ww-font-style-text","buttonType":"button","hasLeftIcon":true,"hasRightIcon":false,"text":{"en":"<div><br></div>"}}},
+                            "styles": {"default":{"width":"24px","cursor":"pointer","height":"24px","aspectRatio":"unset","borderRadius":"6px","backgroundColor":"#000000","color":"#FFFFFF","fontSize":"14px","fontWeight":500,"lineHeight":"20px"}},
+                            "children": {
+                              "leftIcon": {
+                                "tag": "ww-icon",
+                                "props": {"default":{"icon":"fas fa-sort","color":"#FFFFFF"}}
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Header Category Container",
+                "styles": {"default":{"display":"table-cell"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-text",
+                      "name": "Header Category",
+                      "states": [{"id":"_wwHover","label":"hover"}],
+                      "props": {"default":{"tag":"p","text":{"en":"Category"}}},
+                      "styles": {"default":{"cursor":"pointer","padding":"12px 16px","transition":"color 0.2s ease","color":{"code":"globalContext.colors['5172739f-2906-4f10-a758-a1d4929606dc']","__wwtype":"f"},"fontSize":"14px","fontWeight":"600","rowGap":"4px","columnGap":"4px","alignItems":"center"},"_wwHover_default":{"color":{"code":"globalContext.colors['c9179837-9d7e-4518-9fa7-8e065db8409d']","__wwtype":"f"}}}
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Header Prep Time Container",
+                "styles": {"default":{"display":"table-cell"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-text",
+                      "name": "Header Prep Time",
+                      "states": [{"id":"_wwHover","label":"hover"}],
+                      "props": {"default":{"tag":"p","text":{"en":"Preparation Time"}}},
+                      "styles": {"default":{"cursor":"pointer","padding":"12px 16px","transition":"color 0.2s ease","color":{"code":"globalContext.colors['5172739f-2906-4f10-a758-a1d4929606dc']","__wwtype":"f"},"fontSize":"14px","fontWeight":"600","rowGap":"4px","columnGap":"4px","alignItems":"center"},"_wwHover_default":{"color":{"code":"globalContext.colors['c9179837-9d7e-4518-9fa7-8e065db8409d']","__wwtype":"f"}}}
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Header Difficulty Container",
+                "styles": {"default":{"display":"table-cell"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-text",
+                      "name": "Header Difficulty",
+                      "states": [{"id":"_wwHover","label":"hover"}],
+                      "props": {"default":{"tag":"p","text":{"en":"Difficulty"}}},
+                      "styles": {"default":{"cursor":"pointer","padding":"12px 16px","transition":"color 0.2s ease","color":{"code":"globalContext.colors['5172739f-2906-4f10-a758-a1d4929606dc']","__wwtype":"f"},"fontSize":"14px","fontWeight":"600","rowGap":"4px","columnGap":"4px","alignItems":"center"},"_wwHover_default":{"color":{"code":"globalContext.colors['c9179837-9d7e-4518-9fa7-8e065db8409d']","__wwtype":"f"}}}
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Header Status Container",
+                "styles": {"default":{"display":"table-cell"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-text",
+                      "name": "Header Status",
+                      "states": [{"id":"_wwHover","label":"hover"}],
+                      "props": {"default":{"tag":"p","text":{"en":"Status"}}},
+                      "styles": {"default":{"cursor":"pointer","padding":"12px 16px","transition":"color 0.2s ease","color":{"code":"globalContext.colors['5172739f-2906-4f10-a758-a1d4929606dc']","__wwtype":"f"},"fontSize":"14px","fontWeight":"600","rowGap":"4px","columnGap":"4px","alignItems":"center"},"_wwHover_default":{"color":{"code":"globalContext.colors['c9179837-9d7e-4518-9fa7-8e065db8409d']","__wwtype":"f"}}}
+                    }
+                  ]
+                }
+              },
+              {
+                "tag": "ww-flexbox",
+                "name": "Header Actions Container",
+                "styles": {"default":{"display":"table-cell"}},
+                "children": {
+                  "children": [
+                    {
+                      "tag": "ww-text",
+                      "name": "Header Actions",
+                      "props": {"default":{"tag":"p","text":{"en":"Actions"}}},
+                      "styles": {"default":{"padding":"12px 16px","color":{"code":"globalContext.colors['5172739f-2906-4f10-a758-a1d4929606dc']","__wwtype":"f"},"fontSize":"14px","fontWeight":"600","whiteSpace":"nowrap"}}
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+]
