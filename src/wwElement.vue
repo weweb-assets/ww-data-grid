@@ -76,14 +76,14 @@ export default {
                         label: 'Set Selection',
                         description: 'Set the selection of the table',
                         group: 'Datagrid',
+                        args: [
+                            {
+                                name: 'ids',
+                                type: 'Array',
+                                required: true,
+                            },
+                        ],
                     },
-                    args: [
-                        {
-                            name: 'ids',
-                            type: 'Array',
-                            required: true,
-                        },
-                    ],
                 },
                 setSort: {
                     method: (field, order) => setSortValue({ field, order }),
@@ -91,18 +91,18 @@ export default {
                         label: 'Set Sort',
                         description: 'Set the sort value of the table',
                         group: 'Datagrid',
+                        args: [
+                            {
+                                name: 'field',
+                                type: 'string',
+                                required: true,
+                            },
+                            {
+                                name: 'order',
+                                type: 'string',
+                            },
+                        ],
                     },
-                    args: [
-                        {
-                            name: 'field',
-                            type: 'string',
-                            required: true,
-                        },
-                        {
-                            name: 'order',
-                            type: 'string',
-                        },
-                    ],
                 },
                 setSortField: {
                     method: (field, order) => {
