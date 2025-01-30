@@ -29,6 +29,11 @@ export default {
     options: {
         displayAllowedValues: ['table'],
     },
+    triggerEvents: [
+        { name: 'filterChange', label: 'On Filter Change', event: { field: '', value: '' } },
+        { name: 'sortChange', label: 'On Sort Change', event: { field: '', order: '' } },
+        { name: 'selectionChange', label: 'On Selection change', event: [] },
+    ],
     properties: {
         headerRowElement: {
             hidden: true,

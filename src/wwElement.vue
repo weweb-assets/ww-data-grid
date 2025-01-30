@@ -1,6 +1,10 @@
 <template>
     <table class="ww-data-grid" :style="tableStyle">
-        <wwLocalContext :data="{ data: content.rows, selection }" :methods="localMethods" elementKey="table">
+        <wwLocalContext
+            :data="{ data: content.rows, selection, sort: sortValue, filter: filterValue }"
+            :methods="localMethods"
+            elementKey="table"
+        >
             <wwElement
                 v-bind="content.headerRowElement"
                 :wwProps="{ noDropzone: true, overrideDisplayValues: ['table-header-group'] }"
@@ -12,7 +16,9 @@
                         :column="column"
                         :index="index"
                         :sortValue="sortValue"
+                        :filterValue="filterValue"
                         @update:sortValue="setSortValue"
+                        @update:filterValue="setFilterValue"
                     ></TableHeadCell>
                 </template>
             </wwElement>
@@ -43,8 +49,8 @@ export default {
         uid: { type: String, required: true },
     },
     components: { TableRow, TableHeadCell },
-    emits: [/* wwEditor:start */ 'update:content' /* wwEditor:end */],
-    setup(props) {
+    emits: ['trigger-event', /* wwEditor:start */ 'update:content' /* wwEditor:end */],
+    setup(props, { emit }) {
         const { createElement } = wwLib.useCreateElement();
         const { resolveMappingFormula } = wwLib.wwFormula.useFormula();
 
@@ -62,6 +68,31 @@ export default {
             type: 'object',
         });
 
+        const { value: filterValue, setValue: setFilterValue } = wwLib.wwVariable.useComponentVariable({
+            uid: props.uid,
+            name: 'filter',
+            defaultValue: null,
+            type: 'object',
+        });
+
+        watch(selection, value => {
+            emit('trigger-event', { name: 'selectionChange', event: value });
+        });
+        watch(
+            sortValue,
+            value => {
+                emit('trigger-event', { name: 'sortChange', event: value });
+            },
+            { deep: true }
+        );
+        watch(
+            filterValue,
+            value => {
+                emit('trigger-event', { name: 'filterChange', event: value });
+            },
+            { deep: true }
+        );
+
         return {
             createElement,
             resolveMappingFormula,
@@ -69,6 +100,8 @@ export default {
             setSelection,
             sortValue,
             setSortValue,
+            filterValue,
+            setFilterValue,
             localMethods: {
                 setSelection: {
                     method: setSelection,
@@ -153,6 +186,38 @@ export default {
                     editor: {
                         label: 'Toggle Sort Order',
                         description: 'Toggle the sort order of the table',
+                        group: 'Datagrid',
+                    },
+                },
+                setFilter: {
+                    method: (field, value) => {
+                        setFilterValue({ value, field });
+                    },
+                    editor: {
+                        label: 'Set Filter',
+                        description: 'Set the filter value of the table',
+                        group: 'Datagrid',
+                        args: [
+                            {
+                                name: 'field',
+                                type: 'string',
+                                required: true,
+                            },
+                            {
+                                name: 'value',
+                                type: 'any',
+                                required: true,
+                            },
+                        ],
+                    },
+                },
+                resetFilter: {
+                    method: () => {
+                        setFilterValue(null);
+                    },
+                    editor: {
+                        label: 'Reset Filter',
+                        description: 'Reset the filter value of the table',
                         group: 'Datagrid',
                     },
                 },
