@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import { ref, watch } from 'vue';
 import TableHeadCell from './TableHeadCell.vue';
 import TableRow from './TableRow.vue';
 export default {
