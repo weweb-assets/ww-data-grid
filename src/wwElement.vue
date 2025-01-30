@@ -32,7 +32,9 @@
                         :columns="content.columns"
                         :rowElement="item"
                         :selection="selection"
+                        :selectedCell="selectedCell"
                         @update:selection="setSelection"
+                        @update:selectedCell="selectedCell = $event"
                     ></TableRow>
                 </template>
             </wwLayout>
@@ -51,7 +53,9 @@ export default {
     components: { TableRow, TableHeadCell },
     emits: ['trigger-event', /* wwEditor:start */ 'update:content' /* wwEditor:end */],
     setup(props, { emit }) {
+        /* wwEditor:start */
         const { createElement } = wwLib.useCreateElement();
+        /* wwEditor:end */
         const { resolveMappingFormula } = wwLib.wwFormula.useFormula();
 
         const { value: selection, setValue: setSelection } = wwLib.wwVariable.useComponentVariable({
@@ -75,6 +79,8 @@ export default {
             type: 'object',
         });
 
+        const selectedCell = ref({});
+
         watch(selection, value => {
             emit('trigger-event', { name: 'selectionChange', event: value });
         });
@@ -94,7 +100,9 @@ export default {
         );
 
         return {
+            /* wwEditor:start */
             createElement,
+            /* wwEditor:end */
             resolveMappingFormula,
             selection,
             setSelection,
@@ -102,6 +110,7 @@ export default {
             setSortValue,
             filterValue,
             setFilterValue,
+            selectedCell,
             localMethods: {
                 setSelection: {
                     method: setSelection,

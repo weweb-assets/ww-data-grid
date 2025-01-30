@@ -1,5 +1,9 @@
 <template>
-    <wwLocalContext :data="{ index, column, data, isEditing, editingData }" :methods="localMethods" elementKey="cell">
+    <wwLocalContext
+        :data="{ index, column, data, isEditing, editingData, isSelected }"
+        :methods="localMethods"
+        elementKey="cell"
+    >
         <wwElement v-bind="cellElement" tag="td" :wwProps="{ overrideDisplayValues: ['table-cell'] }"></wwElement>
     </wwLocalContext>
 </template>
@@ -12,8 +16,10 @@ export default {
         rowData: { type: undefined, required: true },
         column: { type: Object, required: true },
         cellElement: { type: Object, required: true },
+        isSelected: { type: Boolean, required: true },
     },
-    setup() {
+    emits: ['select', 'unselect'],
+    setup(props, { emit }) {
         const { resolveMappingFormula } = wwLib.wwFormula.useFormula();
 
         const isEditing = ref(false);
@@ -70,6 +76,22 @@ export default {
                                 required: true,
                             },
                         ],
+                    },
+                },
+                select: {
+                    method: () => emit('select'),
+                    editor: {
+                        label: 'Select',
+                        description: 'Select the cell',
+                        group: 'Datagrid cell',
+                    },
+                },
+                unselect: {
+                    method: () => emit('unselect'),
+                    editor: {
+                        label: 'Unselect',
+                        description: 'Unselect the cell',
+                        group: 'Datagrid cell',
                     },
                 },
             },

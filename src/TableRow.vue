@@ -12,6 +12,13 @@
                     :column="column"
                     :cellElement="cellElements[colIndex]"
                     :dataId="dataId"
+                    :is-selected="
+                        selectedCell?.row === dataId && selectedCell?.column === (column.id ?? column.name ?? colIndex)
+                    "
+                    @select="
+                        $emit('update:selectedCell', { row: dataId, column: column.id ?? column.name ?? colIndex })
+                    "
+                    @unselect="$emit('update:selectedCell', null)"
                 ></TableCell>
             </template>
         </wwElement>
@@ -31,8 +38,9 @@ export default {
         rowElement: { type: Object, required: true },
         dataId: { type: String, required: true },
         selection: { type: Array, required: true },
+        selectedCell: { type: Object, required: true },
     },
-    emits: ['update:selection'],
+    emits: ['update:selection', 'update:selectedCell'],
     components: { TableCell },
     setup(props, { emit }) {
         const { resolveMappingFormula } = wwLib.wwFormula.useFormula();
