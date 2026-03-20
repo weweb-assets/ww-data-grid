@@ -55,14 +55,16 @@ export default {
             event: { value: '', id: '', cancel: () => {} },
             getTestEvent: 'getTestEvent',
             default: true,
+            description: "Run when a row is updated.",
         },
         {
             name: 'delete:row',
             label: { en: 'On Row delete' },
             event: { value: '', id: '' },
             getTestEvent: 'getTestEvent',
+            description: "Run when a row is deleted.",
         },
-        { name: 'sort', label: { en: 'On Sort' }, event: { value: '', column: '' } },
+        { name: 'sort', label: { en: 'On Sort' }, event: { value: '', column: '' }, description: "Run when sort order changes." },
     ],
     properties: {
         // SETTINGS
